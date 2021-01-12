@@ -20,7 +20,14 @@ DEFAULT_RELEASED_PATTERN = r"^tags/.*$"
 DEFAULT_OUTPUTDIR_FORMAT = r"{ref.name}"
 
 Version = collections.namedtuple(
-    "Version", ["name", "url", "version", "release", "is_released",]
+    "Version",
+    [
+        "name",
+        "url",
+        "version",
+        "release",
+        "is_released",
+    ],
 )
 
 
@@ -175,6 +182,7 @@ def config_inited(app, config):
     old_config.init_values()
     config.version = data["version"]
     config.release = data["release"]
+    config.rst_prolog = data["rst_prolog"]
     config.today = old_config.today
     if not config.today:
         config.today = sphinx_i18n.format_date(
