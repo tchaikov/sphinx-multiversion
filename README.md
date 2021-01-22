@@ -9,7 +9,9 @@ messing with Sphinx internals as much as possible.
 
 Documentation can be found at: https://holzhaus.github.io/sphinx-multiversion/
 
-## Fork changes
+## Fork additions
+
+### Prebuild command
 
 The fork introduces the possibility to run custom commands before building the docs with the option ``--pre-build``.
 
@@ -28,6 +30,19 @@ You can pass multiple commands by adding extra ``--pre-build`` tags. The command
 ```
 sphinx-multiversion docs build/html --pre-build pwd --pre-build ls
 ```
+
+### Rename latest version URL
+
+The ``smv_latest_version`` setting determines which is the latest version.
+Setting this option could be useful to show a warning when users are not reading the latest version.
+
+You can override the latest version output directory with ``smv_rename_latest_version``.
+
+Here's an example:
+
+.. code-block:: python
+    smv_latest_version = 'x.y.z'        # Use the branch/tag name
+    smv_rename_latest_version = 'latest' # Use the commit hash
 
 ## Maintenance
 
