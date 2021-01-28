@@ -12,6 +12,7 @@ import string
 import subprocess
 import sys
 import tempfile
+import shutil
 import shlex
 
 from sphinx import config as sphinx_config
@@ -385,7 +386,7 @@ def main(argv=None):
             # Create alias for latest version
             if data['aliasdir']:
                 if os.path.exists(data['aliasdir']):
-                     os.remove(data['aliasdir'])
-                os.symlink(data['outputdir'], data['aliasdir'])
+                     shutil.rmtree(data['aliasdir'], ignore_errors=True)
+                shutil.copytree(data['outputdir'], data['aliasdir'])
 
     return 0
