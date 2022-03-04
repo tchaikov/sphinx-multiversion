@@ -38,7 +38,7 @@ You can override the latest version output directory with ``smv_rename_latest_ve
 Here's an example:
 
 ```
-smv_latest_version = 'x.y.z'        # Use the branch/tag name
+smv_latest_version = 'x.y.z'         # Use the branch/tag name
 smv_rename_latest_version = 'latest' # Use the commit hash
 ```
 

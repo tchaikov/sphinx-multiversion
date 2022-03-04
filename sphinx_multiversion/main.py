@@ -1,25 +1,24 @@
 # -*- coding: utf-8 -*-
-import itertools
 import argparse
-import multiprocessing
 import contextlib
+import itertools
 import json
 import logging
+import multiprocessing
 import os
 import pathlib
 import re
+import shlex
+import shutil
 import string
 import subprocess
 import sys
 import tempfile
-import shutil
-import shlex
 
 from sphinx import config as sphinx_config
 from sphinx import project as sphinx_project
 
-from . import sphinx
-from . import git
+from . import git, sphinx
 
 
 @contextlib.contextmanager
@@ -69,8 +68,8 @@ def load_sphinx_config_worker(q, confpath, confoverrides, add_defaults):
                 str,
             )
             current_config.add("smv_prefer_remote_refs", False, "html", bool)
-            current_config.add("smv_latest_version","","html",str)
-            current_config.add("smv_rename_latest_version","","html",str)
+            current_config.add("smv_latest_version", "", "html", str)
+            current_config.add("smv_rename_latest_version", "", "html", str)
 
         current_config.pre_init_values()
         current_config.init_values()
@@ -197,7 +196,7 @@ def main(argv=None):
 
     # Parse pre build commands
     pre_build_commands = [shlex.split(command) for command in args.pre_build]
-    
+
     # Get relative paths to root of git repository
     gitroot = pathlib.Path(
         git.get_toplevel_path(cwd=sourcedir_absolute)
@@ -270,8 +269,11 @@ def main(argv=None):
             )
 
             # Rename outputdir to latest version name
-            aliasdir = ''
-            if config.smv_latest_version == gitref.name and config.smv_rename_latest_version:
+            aliasdir = ""
+            if (
+                config.smv_latest_version == gitref.name
+                and config.smv_rename_latest_version
+            ):
                 aliasdir = outputdir
                 outputdir = config.smv_rename_latest_version
 
@@ -308,9 +310,9 @@ def main(argv=None):
                 "outputdir": os.path.join(
                     os.path.abspath(args.outputdir), outputdir
                 ),
-                "aliasdir": '' if not aliasdir else os.path.join(
-                    os.path.abspath(args.outputdir), aliasdir
-                ),
+                "aliasdir": ""
+                if not aliasdir
+                else os.path.join(os.path.abspath(args.outputdir), aliasdir),
                 "confdir": confpath,
                 "docnames": list(project.discover()),
             }
@@ -373,20 +375,27 @@ def main(argv=None):
                     "SPHINX_MULTIVERSION_CONFDIR": data["confdir"],
                 }
             )
-            
+
             if pre_build_commands:
                 logger.debug("Running pre build commands:")
                 for command in pre_build_commands:
                     try:
-                        subprocess.check_call(command, cwd=current_cwd, env=env)
+                        subprocess.check_call(
+                            command, cwd=current_cwd, env=env
+                        )
                     except OSError as err:
-                        logger.warning("Command '%s' failed for build '%s': '%s'", command, data["name"], err)
+                        logger.warning(
+                            "Command '%s' failed for build '%s': '%s'",
+                            command,
+                            data["name"],
+                            err,
+                        )
             subprocess.check_call(cmd, cwd=current_cwd, env=env)
 
             # Create alias for latest version
-            if data['aliasdir']:
-                if os.path.exists(data['aliasdir']):
-                     shutil.rmtree(data['aliasdir'], ignore_errors=True)
-                shutil.copytree(data['outputdir'], data['aliasdir'])
+            if data["aliasdir"]:
+                if os.path.exists(data["aliasdir"]):
+                    shutil.rmtree(data["aliasdir"], ignore_errors=True)
+                shutil.copytree(data["outputdir"], data["aliasdir"])
 
     return 0

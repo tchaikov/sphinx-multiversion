@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
+import collections
 import datetime
 import json
-import collections
 import logging
 import os
 import posixpath
+from distutils.version import LooseVersion
 
 from sphinx import config as sphinx_config
-from sphinx.util import i18n as sphinx_i18n
 from sphinx.locale import _
+from sphinx.util import i18n as sphinx_i18n
 
 logger = logging.getLogger(__name__)
 
@@ -49,35 +50,39 @@ class VersionInfo:
 
     @property
     def tags(self):
-        return [
+        result = [
             self._dict_to_versionobj(v)
             for v in self.metadata.values()
             if v["source"] == "tags"
         ]
+        return sorted(result, key=lambda v: LooseVersion(v.name))
 
     @property
     def branches(self):
-        return [
+        result = [
             self._dict_to_versionobj(v)
             for v in self.metadata.values()
             if v["source"] != "tags"
         ]
+        return sorted(result, key=lambda v: LooseVersion(v.name))
 
     @property
     def releases(self):
-        return [
+        result = [
             self._dict_to_versionobj(v)
             for v in self.metadata.values()
             if v["is_released"]
         ]
+        return sorted(result, key=lambda v: LooseVersion(v.name))
 
     @property
     def in_development(self):
-        return [
+        result = [
             self._dict_to_versionobj(v)
             for v in self.metadata.values()
             if not v["is_released"]
         ]
+        return sorted(result, key=lambda v: LooseVersion(v.name))
 
     def __iter__(self):
         for item in self.tags:

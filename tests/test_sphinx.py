@@ -69,7 +69,7 @@ class VersionInfoTestCase(unittest.TestCase):
         versions = self.versioninfo.branches
         self.assertEqual(
             [version.name for version in versions],
-            ["master", "branch-with/slash"],
+            ["branch-with/slash", "master"],
         )
 
     def test_releases_property(self):
@@ -80,7 +80,7 @@ class VersionInfoTestCase(unittest.TestCase):
         versions = self.versioninfo.in_development
         self.assertEqual(
             [version.name for version in versions],
-            ["master", "branch-with/slash"],
+            ["branch-with/slash", "master"],
         )
 
     def test_vhasdoc(self):

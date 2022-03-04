@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os.path
+
 from setuptools import setup
 
 with open(os.path.join(os.path.dirname(__file__), "README.md")) as f:
@@ -20,7 +21,7 @@ setup(
     author="Jan Holthuis",
     author_email="holthuis.jan@googlemail.com",
     url="https://holzhaus.github.io/sphinx-multiversion/",
-    version="0.2.10",
+    version="0.2.11",
     install_requires=["sphinx >= 2.1"],
     license="BSD",
     packages=["sphinx_multiversion"],
