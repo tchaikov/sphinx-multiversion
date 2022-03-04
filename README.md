@@ -44,4 +44,16 @@ smv_rename_latest_version = 'latest' # Use the commit hash
 
 ## Maintenance
 
-This fork will be maintained until https://github.com/Holzhaus/sphinx-multiversion/issues/45 is solved.
+This fork will be maintained until the following issues are solved:
+- https://github.com/Holzhaus/sphinx-multiversion/issues/45
+- https://github.com/Holzhaus/sphinx-multiversion/issues/65 are solved.
+
+## License
+
+BSD 2-Clause License
+
+Copyright (c) 2020, Jan Holthuis <jan.holthuis@ruhr-uni-bochum.de>
+All rights reserved.
+
+Modifications (see "Fork Additions") 2020, David Garcia <hi@davidgarcia.dev>
+
