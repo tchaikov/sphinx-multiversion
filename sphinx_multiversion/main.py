@@ -124,6 +124,21 @@ def get_python_flags():
             yield from ("-X", "{}={}".format(option, value))
 
 
+def run_commands(commands, current_cwd, env, name):
+    for command in commands:
+        try:
+            subprocess.check_call(
+                command, cwd=current_cwd, env=env
+            )
+        except OSError as err:
+            logger = logging.getLogger(__name__)
+            logger.warning(
+                "Command '%s' failed for build '%s': '%s'",
+                command,
+                name,
+                err,
+            )
+
 def main(argv=None):
     if not argv:
         argv = sys.argv[1:]
@@ -170,6 +185,12 @@ def main(argv=None):
         default=[],
         help="a list of commands to run before running sphinx-build",
     )
+    parser.add_argument(
+        "--post-build",
+        action="append",
+        default=[],
+        help="a list of commands to run after running sphinx-build",
+    )
     args, argv = parser.parse_known_args(argv)
     if args.noconfig:
         return 1
@@ -196,6 +217,7 @@ def main(argv=None):
 
     # Parse pre build commands
     pre_build_commands = [shlex.split(command) for command in args.pre_build]
+    post_build_commands = [shlex.split(command) for command in args.post_build]
 
     # Get relative paths to root of git repository
     gitroot = pathlib.Path(
@@ -378,19 +400,14 @@ def main(argv=None):
 
             if pre_build_commands:
                 logger.debug("Running pre build commands:")
-                for command in pre_build_commands:
-                    try:
-                        subprocess.check_call(
-                            command, cwd=current_cwd, env=env
-                        )
-                    except OSError as err:
-                        logger.warning(
-                            "Command '%s' failed for build '%s': '%s'",
-                            command,
-                            data["name"],
-                            err,
-                        )
+                run_commands(pre_build_commands, current_cwd, env, data["name"])
+            
+            # Build Sphinx
             subprocess.check_call(cmd, cwd=current_cwd, env=env)
+
+            if post_build_commands:
+                logger.debug("Running post build commands:")
+                run_commands(post_build_commands, current_cwd, env, data["name"])
 
             # Create alias for latest version
             if data["aliasdir"]:

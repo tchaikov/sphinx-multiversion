@@ -8,9 +8,9 @@ Original documentation can be found at: https://holzhaus.github.io/sphinx-multiv
 
 ## Fork additions
 
-### Prebuild command
+### Prebuild and postbuild commands
 
-The fork introduces the possibility to run custom commands before building the docs with the option ``--pre-build``.
+The fork introduces the possibility to run custom commands before and after building the docs with the option ``--pre-build`` and ``--post-build``.
 
 This could be useful to prepare the docs repository before running ``sphinx-build``, debug the execution, or even generate versioned documentation using other builders.
 
